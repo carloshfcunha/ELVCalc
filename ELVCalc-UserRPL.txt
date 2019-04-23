@@ -1,0 +1,232 @@
+\<< "Infome as constantes de Antoine" DUP { "a1=" "b1=" "c1=" } { 1. 0. } { } { } INFORM DROP 'L' STO { "a2=" "b2=" "c2=" } { 1. 0. } { } { } INFORM DROP 'L1' STO 
+'L(1.)' EVAL 'a1' STO 
+'L(2.)' EVAL 'b1' STO 
+'L(3.)' EVAL 'c1' STO 
+'L1(1.)' EVAL 'a2' STO 
+'L1(2.)' EVAL 'b2' STO 
+'L1(3.)' EVAL 'c2' STO 
+'T' PURGE 
+'P' PURGE 
+'EXP(a1-b1/(T+c1))' 'EP1' STO 
+'EXP(a2-b2/(T+c2))' 'EP2' STO 
+'-c1+b1/(a1-LN(P))' 'ET1' STO 
+'-c2+b2/(a2-LN(P))' 'ET2' STO
+"Informe o valor de R" { "R=" } { 1. 0. } { } { } INFORM DROP 'L' STO 
+'L(1.)' EVAL 'R' STO 
+"Eq. p/ calcular \Gg" { { "Margules 1 parametro" 1. } { "Margules 2 parametros" 2. } { "Van Lar" 3. } { "Wilson" 4. } { "NRTL" 5. } } 1. CHOOSE DROP 'I' STO
+  IF 'I==1.'
+  THEN 
+  "Informe a const. p/ Margules 1" { "A=" } { 1. 0. } { } { } INFORM DROP 'L' STO 
+  'L(1.)' EVAL 'A' STO 
+  'EXP(A/R/T*X2^2.)' 'EG1' STO 
+  'EXP(A/R/T*X1^2.)' 'EG2' STO
+  END
+  IF 'I==2.'
+  THEN 
+  "Informe as const's p/ Margules 2" { "A=" "B=" } { 1. 0. } { } { } INFORM DROP 'L' STO 
+  'L(1.)' EVAL 'A' STO 
+  'L(2.)' EVAL 'B' STO 
+  'EXP(((A+3.*B)*X2^2.-4.*B*X2^3.)/R/T)' 'EG1' STO 
+  'EXP(((A-3.*B)*X1^2.+4.*B*X1^2.)/R/T)' 'EG2' STO
+  END
+  IF 'I==3.'
+  THEN 
+  "Informe as const's p/ Van Laar" { "A=" "B=" } { 1. 0. } { } { } INFORM DROP 'L' STO 
+  'L(1.)' EVAL 'A' STO 
+  'L(2.)' EVAL 'B' STO 
+  'EXP(A/R/T*(B*X2/(A*X1+B*X2))^2.)' 'EG1' STO 
+  'EXP(B/R/T*(A*X1/(A*X1+B*X2))^2.)' 'EG2' STO
+  END
+  IF 'I==4.'
+  THEN 
+  "Informe as const's p/ Wilson" { "a12=" "a21=" "V1=" "V2=" } { 1. 0. } { } { } INFORM DROP 'L' STO 
+  'L(1.)' EVAL 'a12' STO 
+  'L(2.)' EVAL 'a21' STO 
+  'L(3.)' EVAL 'V1' STO 
+  'L(4.)' EVAL 'V2' STO 
+  'V2/V1*EXP(-a12/R/T)' 'A12' STO 
+  'V1/V2*EXP(-a21/R/T)' 'A21' STO 
+  'EXP(-(LN(X1+A12*X2)+X2*(A21/(X2+A21*X1)-A12/(X1+A12*X2))))' 'EG1' STO 
+  'EXP(-(LN(X2+A21*X1)+X1*(A12/(X1+A12*X2)-A21/(X2+A21*X1))))' 'EG2' STO
+  END
+  IF 'I==5.'
+  THEN 
+  "Informe as const's p/ NRTL" { "b12=" "b21=" "\Ga=" } { 1. 0. } { } { } INFORM DROP 'L' STO 
+  'L(1.)' EVAL 'b12' STO 
+  'L(2.)' EVAL 'b21' STO 
+  'L(3.)' EVAL '\Ga' STO 
+  'b12/R/T' 'TAU12' STO 
+  'b21/R/T' 'TAU21' STO 
+  'EXP(-\Ga*TAU12)' 'G12' STO 
+  'EXP(-\Ga*TAU21)' 'G21' STO 
+  'EXP(X2^2.*(TAU21*(G21/(X1+X2*G21))^2.+TAU12*(G12/(X2+X1*G12))^2.))' 'EG1' STO 
+  'EXP(X1^2.*(TAU12*(G12/(X2+X1*G12))^2.+TAU21*(G21/(X1+X2*G21))^2.))' 'EG2' STO
+  END 
+"Escolha o procedimento" { { "BOLP" 1. } { "ORVP" 2. } { "BOLT" 3. } { "ORVT" 4. } { "AZEOTROPO" 5. } } 1. CHOOSE DROP 'I' STO
+  IF 'I==1.'
+  THEN
+  "Informe X1 e T" { "X1=" "T=" } { 1. 0. } { } { } INFORM DROP 'L' STO 
+  'L(1.)' EVAL 'X1' STO 
+  'L(2.)' EVAL 'T' STO 
+  '1.-X1' EVAL 'X2' STO X2 "X2" \->TAG 
+  EP1 EVAL 'P1' STO P1 "P1Sat" \->TAG 
+  EP2 EVAL 'P2' STO P2 "P2Sat" \->TAG 
+  EG1 EVAL 'G1' STO G1 "\Gg1" \->TAG 
+  EG2 EVAL 'G2' STO G2 "\Gg2" \->TAG 
+  1 'I' STO
+  1 'J' STO
+  WHILE I .0001 >
+  REPEAT
+    'X1*G1*P1+(1.-X1)*G2*P2' EVAL 'P' STO P "P" \->TAG P 'PI' STO
+    'X1*G1*P1/P' EVAL 'Y1' STO Y1 "Y1" \->TAG 
+    '1.-Y1' EVAL 'Y2' STO Y2 "Y2" \->TAG
+    '1/(Y1/G1/P1+Y2/G2/P2)' EVAL 'P' STO P "P" \->TAG 
+    '((P-PI)^2)^(1/2)' EVAL 'I' STO
+    J "ITERACAO" \->TAG 
+    'J+1' EVAL 'J' STO
+  END
+  DROP
+  END
+  IF 'I==2.'
+  THEN 
+  "Informe Y1 e T" { "Y1=" "T=" } { 1. 0. } { } { } INFORM DROP 'L' STO 
+  'L(1.)' EVAL 'Y1' STO 
+  'L(2.)' EVAL 'T' STO 
+  '1.-Y1' EVAL 'Y2' STO Y2 "Y2" \->TAG 
+  1. 'G1' STO G1 "\Gg1" \->TAG 
+  1. 'G2' STO G2 "\Gg2" \->TAG 
+  EP1 EVAL 'P1' STO P1 "P1Sat" \->TAG 
+  EP2 EVAL 'P2' STO P2 "P2Sat" \->TAG 
+  '1./(Y1/(G1*P1)+Y2/(G2*P2))' EVAL 'P' STO P "P" \->TAG 
+  'Y1*P/G1/P1' EVAL 'X1' STO X1 "X1" \->TAG 
+  '1.-X1' EVAL 'X2' STO X2 "X2" \->TAG
+  EG1 EVAL 'G1' STO G1 "\Gg1" \->TAG 
+  EG2 EVAL 'G2' STO G2 "\Gg2" \->TAG
+  1 'I' STO
+  1 'J' STO 
+  WHILE I .00001 >
+  REPEAT
+    P 'PI' STO 
+    G1 'GI' STO
+    '1./(Y1/(G1*P1)+Y2/(G2*P2))' EVAL 'P' STO P "P" \->TAG
+    'Y1*P/G1/P1' EVAL 'X1' STO X1 "X1" \->TAG 
+    '1.-X1' EVAL 'X2' STO X2 "X2" \->TAG
+    EG1 EVAL 'G1' STO G1 "\Gg1" \->TAG 
+    EG2 EVAL 'G2' STO G2 "\Gg2" \->TAG
+    '((GI-G1)^2.)^(1/2)' EVAL 'I2' STO
+    '((PI-P)^2.)^(1/2)' EVAL 'I' STO 
+    J "ITERACAO" \->TAG 
+    'J+1.' EVAL 'J' STO
+  END
+  DROP
+  END
+  IF 'I==3.'
+  THEN 
+  "Informe X1 e P" { "X1=" "P=" } { 1. 0. } { } { } INFORM DROP 'L' STO 
+  'L(1.)' EVAL 'X1' STO 
+  'L(2.)' EVAL 'P' STO 
+  '1.-X1' EVAL 'X2' STO X2 "X2" \->TAG 
+  ET1 EVAL 'T1' STO T1 "T1Sat" \->TAG 
+  ET2 EVAL 'T2' STO T2 "T2Sat" \->TAG 
+  'X1*T1+X2*T2' EVAL 'T' STO T "T" \->TAG
+  EP1 EVAL 'P1' STO P1 "P1Sat" \->TAG 
+  EP2 EVAL 'P2' STO P2 "P2Sat" \->TAG
+  EG1 EVAL 'G1' STO G1 "\Gg1" \->TAG 
+  EG2 EVAL 'G2' STO G2 "\Gg2" \->TAG 
+  'P/(X1*G1+X2*G2*P2/P1)' EVAL 'P1' STO P1 "P1Sat" \->TAG 
+  P 'PJ' STO 
+  P1 'P' STO 
+  ET1 EVAL 'T' STO T "T" \->TAG 
+  1. 'J' STO 
+  1. 'I' STO
+  WHILE I .0001 >
+  REPEAT  
+    EP2 EVAL 'P2' STO P2 "P2Sat" \->TAG 
+    'X1*G1*P1/PJ' EVAL 'Y1' STO Y1 "Y1" \->TAG 
+    '1.-Y1' EVAL 'Y2' STO Y2 "Y2" \->TAG 
+    EG1 EVAL 'G1' STO G1 "\Gg1" \->TAG 
+    EG2 EVAL 'G2' STO G2 "\Gg2" \->TAG 
+    'PJ/(X1*G1+X2*G2*P2/P1)' EVAL 'P1' STO P1 "P1Sat" \->TAG 
+    P1 'P' STO ET1 EVAL 'TI' STO 
+    '((TI-T)^2.)^(1/2)' EVAL 'I' STO 
+    TI 'T' STO T "T" \->TAG 
+    J "ITERACAO" \->TAG  
+    'J+1.' EVAL 'J' STO
+  END
+  DROP
+  END
+  IF 'I==4.'
+  THEN 
+  "Informe Y1 e P" { "Y1=" "P=" } { 1. 0. } { } { } INFORM DROP 'L' STO 
+  'L(1.)' EVAL 'Y1' STO 
+  'L(2.)' EVAL 'P' STO 
+  '1.-Y1' EVAL 'Y2' STO Y2 "Y2" \->TAG 
+  1. 'G1' STO G1 "\Gg1" \->TAG 
+  1. 'G2' STO G2 "\Gg2" \->TAG 
+  ET1 EVAL 'T1' STO T1 "T1Sat" \->TAG 
+  ET2 EVAL 'T2' STO T2 "T2Sat" \->TAG 
+  'Y1*T1+Y2*T2' EVAL 'T' STO T "T" \->TAG 
+  EP1 EVAL 'P1' STO P1 "P1Sat" \->TAG 
+  EP2 EVAL 'P2' STO P2 "P2Sat" \->TAG 
+  'P*(Y1/G1+Y2/G2*P1/P2)' EVAL 'P1' STO P1 "P1Sat" \->TAG 
+  P 'PA' STO 
+  P1 'P' STO 
+  ET1 EVAL 'T' STO T "T" \->TAG 
+  PA 'P' STO 
+  EP2 EVAL 'P2' STO P2 "P2Sat" \->TAG 
+  'Y1*P/G1/P1' EVAL 'X1' STO X1 "X1" \->TAG 
+  '1.-X1' EVAL 'X2' STO X2 "X2" \->TAG 
+  EG1 EVAL 'G1' STO G1 "\Gg1" \->TAG 
+  EG2 EVAL 'G2' STO G2 "\Gg2" \->TAG 
+  'P*(Y1/G1+Y2/G2*P1/P2)' EVAL 'P1' STO P1 "P1Sat" \->TAG 
+  P1 'P' STO 
+  ET1 EVAL 'T' STO T "T" \->TAG 
+  PA 'P' STO
+  1. 'J' STO 
+  1. 'I' STO 
+  WHILE I .0001 >
+  REPEAT 
+    T 'TI' STO  
+    EP2 EVAL 'P2' STO P2 "P2Sat" \->TAG 
+    'Y1*P/G1/P1' EVAL 'X1' STO X1 "X1" \->TAG 
+    '1.-X1' EVAL 'X2' STO X2 "X2" \->TAG 
+    EG1 EVAL 'G1' STO G1 "\Gg1" \->TAG 
+    EG2 EVAL 'G2' STO G2 "\Gg2" \->TAG 
+    'P*(Y1/G1+Y2/G2*P1/P2)' EVAL 'P1' STO P1 "P1Sat" \->TAG 
+    P1 'P' STO 
+    ET1 EVAL 'T' STO T "T" \->TAG 
+    PA 'P' STO 
+    '((TI-T)^2.)^(1/2)' EVAL 'I' STO
+    J "ITERACAO" \->TAG
+    'J+1.' EVAL 'J' STO 
+  END
+  DROP
+  END
+  IF 'I==5.'
+  THEN 
+  "Informe T" { "T=" } { 1. 0. } { } { } INFORM DROP 'L' STO 
+  'L(1.)' EVAL 'T' STO 
+  EP1 EVAL 'P1' STO P1 "P1Sat" \->TAG 
+  EP2 EVAL 'P2' STO P2 "P2Sat" \->TAG 
+  1. 'X1' STO X1 "X1" \->TAG 
+  1. 'X2' STO X2 "X2" \->TAG 
+  1. 'Y1' STO Y1 "Y1" \->TAG 
+  1. 'Y2' STO Y2 "Y2" \->TAG 
+  0. 'J' STO 1. 'I' STO
+  WHILE I .0001 >
+  REPEAT 
+    EG1 EVAL 'G1' STO G1 "\Gg1" \->TAG 
+    EG2 EVAL 'G2' STO G2 "\Gg2" \->TAG 
+    J "ITERACAO" \->TAG 
+    'X1*G1*P1+X2*G2*P2' EVAL 'P' STO P "P" \->TAG 
+    'X1*G1*P1/P' EVAL 'Y1' STO Y1 "Y1" \->TAG 
+    '1.-Y1' EVAL 'Y2' STO Y2 "Y2" \->TAG 
+    X1 'XI' STO Y1 'X1' STO X1 "X1" \->TAG 
+    Y2 'X2' STO X2 "X2" \->TAG 
+    'J+1.' EVAL 'J' STO 
+    '((X1-XI)^2.)^(1/2)' EVAL 'I' STO
+  END 
+  EG1 EVAL 'G1' STO G1 "\Gg1" \->TAG 
+  EG2 EVAL 'G2' STO G2 "\Gg2" \->TAG
+  END
+\>>
